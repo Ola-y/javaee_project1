@@ -57,7 +57,6 @@ public class AdminServlet extends HttpServlet {
         AdminLoginBO adminLoginBO = gson.fromJson(requestBody,AdminLoginBO.class);
         //响应
         Admin login=adminService.login(adminLoginBO);
-        Result result = new Result();
         if (login != null){
             AdminLoginVO adminLoginVO = new AdminLoginVO();
             //token主要有效，name可有可无

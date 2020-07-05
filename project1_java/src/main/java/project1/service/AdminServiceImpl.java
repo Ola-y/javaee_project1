@@ -3,8 +3,7 @@ package project1.service;
 import project1.dao.AdminDao;
 import project1.dao.AdminDaoImpl;
 import project1.model.Admin;
-import project1.model.bo.AdminLoginBO;
-import project1.model.bo.AdminSearchBO;
+import project1.model.bo.*;
 
 import java.util.List;
 
@@ -37,4 +36,42 @@ public class AdminServiceImpl implements AdminService {
         admin.setNickname(adminSearchBO.getNickname());
         return adminDao.getSearchAdmins(admin);
     }
+
+    @Override
+    public Admin addAdminss(AdminAddBO adminAddBO) {
+        Admin admin=new Admin();
+        admin.setEmail(adminAddBO.getEmail());
+        admin.setNickname(adminAddBO.getNickname());
+        admin.setPassword(adminAddBO.getPwd());
+        return adminDao.addAdminss(admin);
+    }
+
+    @Override
+    public int changePwd(AdminChangeBO changeBO) {
+        Admin admin=new Admin();
+        admin.setOldPwd(changeBO.getOldPwd());
+        admin.setNewPwd(changeBO.getNewPwd());
+        admin.setConfirmPwd(changeBO.getConfirmPwd());
+        admin.setNickname(changeBO.getAdminToken());
+        return adminDao.changePwd(admin);
+    }
+
+    @Override
+    public int updateAdminss(AdminUpdateBO updateBO) {
+        Admin admin=new Admin();
+        admin.setEmail(updateBO.getEmail());
+        admin.setNickname(updateBO.getNickanme());
+        admin.setPassword(updateBO.getPwd());
+        admin.setId(updateBO.getId());
+        return adminDao.updateAdminss(admin);
+    }
+
+    @Override
+    public int deleteAdmins(AdminDeleteBO deleteBO) {
+        Admin admin=new Admin();
+        admin.setId(deleteBO.getId());
+        return adminDao.deleteAdmins(admin);
+    }
+
+
 }

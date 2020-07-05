@@ -45,6 +45,60 @@ public class AdminDaoImpl implements AdminDao {
     }
 
     /**
+     * 添加
+     * @param admin
+     * @return
+     */
+    @Override
+    public Admin addAdminss(Admin admin) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        Admin admins= null;
+        try {
+            admins = runner.insert("insert into admin(email,password,nickname) values(?,?,?)",new BeanHandler<>(Admin.class), admin.getEmail(), admin.getPassword(), admin.getNickname());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return admins;
+    }
+
+    @Override
+    public int changePwd(Admin admin) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            int query=runner.update("update admin set password=? where nickname=? ",admin.getNewPwd(),admin.getNickname());
+            return query;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    @Override
+    public int updateAdminss(Admin admin) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            int query=runner.update("update admin set email=?,password=?,nickname=? where id=?",admin.getEmail(),admin.getPassword(),admin.getNickname(),admin.getId());
+            return query;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
+    public int deleteAdmins(Admin admin) {
+        QueryRunner runner=new QueryRunner(DruidUtils.getDataSource());
+        try {
+            int query=runner.update("delete from admin where id=?",admin.getId());
+            return query;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
      * 1.当账号搜索栏有数据：select * from admin where email like ?
      * 2.当昵称搜索栏有数据: select * from admin where nickname like ?
      * 3.当账号和昵称搜索栏都有数据：select * from admin where email like ? and nickname like ?

@@ -1,8 +1,7 @@
 package project1.service;
 
 import project1.model.Admin;
-import project1.model.bo.AdminLoginBO;
-import project1.model.bo.AdminSearchBO;
+import project1.model.bo.*;
 
 import java.util.List;
 
@@ -16,4 +15,13 @@ public interface AdminService {
     Admin login(AdminLoginBO adminLoginBO);
 
     List<Admin> getSearchAdmins(AdminSearchBO adminSearchBO);
+
+    Admin addAdminss(AdminAddBO adminAddBO);
+
+
+    int changePwd(AdminChangeBO changeBO);
+
+    int updateAdminss(AdminUpdateBO updateBO);
+
+    int deleteAdmins(AdminDeleteBO deleteBO);
 }

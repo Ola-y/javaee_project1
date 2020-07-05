@@ -14,4 +14,13 @@ public interface AdminDao {
     List<Admin> allAdmins();
     
     List<Admin> getSearchAdmins(Admin admin);
+
+    Admin addAdminss(Admin admin);
+
+
+    int changePwd(Admin admin);
+
+    int updateAdminss(Admin admin);
+
+    int deleteAdmins(Admin admin);
 }

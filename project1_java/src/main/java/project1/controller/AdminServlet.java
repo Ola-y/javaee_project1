@@ -3,13 +3,13 @@ package project1.controller;
 import com.google.gson.Gson;
 import project1.model.Admin;
 import project1.model.Result;
-import project1.model.bo.AdminLoginBO;
-import project1.model.bo.AdminSearchBO;
+import project1.model.bo.*;
 import project1.model.vo.AdminLoginVO;
 import project1.service.AdminService;
 import project1.service.AdminServiceImpl;
 import project1.utils.HttpUtils;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -28,17 +28,22 @@ public class AdminServlet extends HttpServlet {
 
     Gson gson=new Gson();
 
-    protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws javax.servlet.ServletException, IOException {
+    protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
         String action = requestURI.replace("/api/admin/admin/", "");
         if ("login".equals(action)){
             login(request,response);
-        }else if ("updateAdmins".equals(action)){
-            updateAdmins(request,response);
-        }else if ("getSearchAdmins".equals(action)){
+        }else if ("getSearchAdmins".equals(action)){ //条件查询
             getSearchAdmins(request,response);
+        }else if ("addAdminss".equals(action)){      //添加管理员
+            addAdminss(request,response);
+        }else if ("updateAdminss".equals(action)){   //修改全部信息
+            updateAdminss(request,response);
+        }else if ("changePwd".equals(action)){       //修改密码
+            changePwd(request,response);
         }
     }
+
 
     /**
      * 管理员登录的具体业务
@@ -65,13 +70,99 @@ public class AdminServlet extends HttpServlet {
     }
 
     /**
+     * 添加admin管理员信息
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    private void addAdminss(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+        AdminAddBO adminAddBO = gson.fromJson(requestBody, AdminAddBO.class);
+        Admin add=adminService.addAdminss(adminAddBO);
+        Result result = new Result();
+        if (add!=null) {
+            result.setCode(0);
+            response.getWriter().println(gson.toJson(result));
+        }else{
+            result.setCode(10000);
+            result.setMessage("该账号不允许重复使用");
+            response.getWriter().println(gson.toJson(result));
+        }
+    }
+
+    /**
+     * 删除管理员
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    private void deleteAdmins(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+        AdminDeleteBO deleteBO = gson.fromJson(requestBody, AdminDeleteBO.class);
+        int delete = adminService.deleteAdmins(deleteBO);
+        Result result=new Result();
+        if (delete==0){
+            result.setCode(0);
+            response.getWriter().println(gson.toJson(result));
+        }else {
+            result.setCode(10000);
+            result.setMessage("删除操作错误!");
+            response.getWriter().println(gson.toJson(result));
+        }
+    }
+
+    /**
+     * 修改admin管理员密码信息
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    private void changePwd(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+        AdminChangeBO changeBO = gson.fromJson(requestBody, AdminChangeBO.class);
+        int changePwd=adminService.changePwd(changeBO);
+        String newPwd=changeBO.getNewPwd();
+        String confirmPwd=changeBO.getConfirmPwd();
+        Result result = new Result();
+        if (newPwd.equals(confirmPwd)) {
+            if (changePwd != 0) {
+                result.setCode(0);
+                response.getWriter().println(gson.toJson(result));
+            } else {
+                result.setCode(10000);
+                result.setMessage("旧密码错误！");
+                response.getWriter().println(gson.toJson(result));
+            }
+        }else {
+            result.setCode(10000);
+            result.setMessage("新密码需要一致！");
+            response.getWriter().println(gson.toJson(result));
+        }
+
+    }
+
+    /**
      * 修改admin管理员信息
      * 1.查询数据库，修改数据返回
      * 2.做出响应
      * @param request
      * @param response
      */
-    private void updateAdmins(HttpServletRequest request, HttpServletResponse response) throws IOException {}
+    private void updateAdminss(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+        AdminUpdateBO updateBO = gson.fromJson(requestBody, AdminUpdateBO.class);
+        int update=adminService.updateAdminss(updateBO);
+        Result result = new Result();
+        if (update!=0){
+            result.setCode(0);
+            response.getWriter().println(gson.toJson(result));
+        }else{
+            result.setCode(10000);
+            result.setMessage("修改错误！");
+            response.getWriter().println(gson.toJson(result));
+        }
+    }
 
     /**
      * 条件查询admin管理员信息
@@ -84,7 +175,7 @@ public class AdminServlet extends HttpServlet {
         String requestBody = HttpUtils.getRequestBody(request);
         AdminSearchBO adminSearchBO=gson.fromJson(requestBody, AdminSearchBO.class);
         List<Admin> admins=adminService.getSearchAdmins(adminSearchBO);
-        response.getWriter().println(Result.ok(admins));
+        response.getWriter().println(gson.toJson(Result.ok(admins)));
     }
 
 

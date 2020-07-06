@@ -5,6 +5,7 @@ import com.sun.org.apache.regexp.internal.RE;
 import project1.model.Admin;
 import project1.model.Result;
 import project1.model.User;
+import project1.model.bo.UserSearchBO;
 import project1.service.AdminService;
 import project1.service.AdminServiceImpl;
 import project1.service.AdminUserService;
@@ -30,9 +31,29 @@ public class AdminUserServlet extends HttpServlet {
 
     Gson gson=new Gson();
 
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
         String action = requestURI.replace("/api/admin/user/", "");
+        String word = null;
+        word = request.getParameter(word);
+        if (("searchUser?word="+word).equals(action)){
+            searchUser(request,response);  //条件查询
+        }
+    }
+
+    /**
+     * 条件查询
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    private void searchUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        String requestBody = HttpUtils.getRequestBody(request);
+        UserSearchBO userSearchBO = gson.fromJson(requestBody, UserSearchBO.class);
+        List<User> users=adminUserService.searchUser(userSearchBO);
+        response.getWriter().println(gson.toJson(Result.ok(users)));
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -9,5 +9,9 @@ import java.util.List;
  * @return
  */
 public interface AdminUserDao {
+
+    List<User> searchUser(User user);
+
+
     List<User> allUser();
 }

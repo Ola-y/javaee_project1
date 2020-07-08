@@ -23,5 +23,5 @@ public interface AdminService {
 
     int updateAdminss(AdminUpdateBO updateBO);
 
-    int deleteAdmins(AdminDeleteBO deleteBO);
+    void deletedmins(int id);
 }

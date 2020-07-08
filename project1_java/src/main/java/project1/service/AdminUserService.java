@@ -1,7 +1,7 @@
 package project1.service;
 
+import project1.model.Admin;
 import project1.model.User;
-import project1.model.bo.UserSearchBO;
 
 import java.util.List;
 
@@ -12,5 +12,7 @@ import java.util.List;
 public interface AdminUserService {
     List<User> allUser();
 
-    List<User> searchUser(UserSearchBO userSearchBO);
+    void deleteUser(int id);
+
+    List<User> searchUser(String word);
 }

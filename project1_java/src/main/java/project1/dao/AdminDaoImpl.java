@@ -87,16 +87,15 @@ public class AdminDaoImpl implements AdminDao {
     }
 
     @Override
-    public int deleteAdmins(Admin admin) {
-        QueryRunner runner=new QueryRunner(DruidUtils.getDataSource());
+    public void deletedmins(int id) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
         try {
-            int query=runner.update("delete from admin where id=?",admin.getId());
-            return query;
+            runner.update("delete from admin where id=?",id);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return 0;
     }
+
 
     /**
      * 1.当账号搜索栏有数据：select * from admin where email like ?

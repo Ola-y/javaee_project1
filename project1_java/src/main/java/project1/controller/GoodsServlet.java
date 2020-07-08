@@ -94,6 +94,8 @@ public class GoodsServlet extends HttpServlet {
             getGoodsByType(request,response);
         }else if ("deleteType".equals(action)){
             deleteType(request,response);
+        }else if ("deleteGoods".equals(action)){
+            deleteGoods(request,response);
         }
     }
 
@@ -132,5 +134,11 @@ public class GoodsServlet extends HttpServlet {
         int typeId= Integer.parseInt(request.getParameter("typeId"));
         goodsService.deleteType(typeId);
         response.getWriter().println(gson.toJson(Result.ok()));
+    }
+
+    private void deleteGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id= Integer.parseInt(request.getParameter("id"));
+        goodsService.deleteGoods(id);
+        response.getWriter().println(id);
     }
 }

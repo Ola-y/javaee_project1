@@ -67,11 +67,8 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public int deleteAdmins(AdminDeleteBO deleteBO) {
-        Admin admin=new Admin();
-        admin.setId(deleteBO.getId());
-        return adminDao.deleteAdmins(admin);
+    public void deletedmins(int id) {
+        adminDao.deletedmins(id);
     }
-
 
 }

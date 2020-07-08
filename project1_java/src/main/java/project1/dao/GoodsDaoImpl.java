@@ -117,4 +117,14 @@ public class GoodsDaoImpl implements GoodsDao {
         }
     }
 
+    @Override
+    public void deleteGoods(int id) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("delete from goods where id=?",id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

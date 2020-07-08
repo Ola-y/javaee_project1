@@ -26,4 +26,6 @@ public interface GoodsDao {
     Type addType(Type type);
 
     void deleteType(int typeId);
+
+    void deleteGoods(int id);
 }

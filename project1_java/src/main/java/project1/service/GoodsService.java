@@ -21,4 +21,6 @@ public interface GoodsService {
     Type addType(TypeAddBO typeAddBO);
 
     void deleteType(int typeId);
+
+    void deleteGoods(int id);
 }

@@ -22,5 +22,5 @@ public interface AdminDao {
 
     int updateAdminss(Admin admin);
 
-    int deleteAdmins(Admin admin);
+    void deletedmins(int id);
 }

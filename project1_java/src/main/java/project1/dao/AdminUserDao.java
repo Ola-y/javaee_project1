@@ -1,5 +1,6 @@
 package project1.dao;
 
+import project1.model.Admin;
 import project1.model.User;
 
 import java.util.List;
@@ -9,9 +10,9 @@ import java.util.List;
  * @return
  */
 public interface AdminUserDao {
-
-    List<User> searchUser(User user);
-
-
     List<User> allUser();
+
+    void deleteUser(int id);
+
+    List<User> searchUser(String word);
 }

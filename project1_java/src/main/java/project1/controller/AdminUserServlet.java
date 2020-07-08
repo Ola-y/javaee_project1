@@ -37,23 +37,6 @@ public class AdminUserServlet extends HttpServlet {
         String action = requestURI.replace("/api/admin/user/", "");
         String word = null;
         word = request.getParameter(word);
-        if (("searchUser?word="+word).equals(action)){
-            searchUser(request,response);  //条件查询
-        }
-    }
-
-    /**
-     * 条件查询
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    private void searchUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        String requestBody = HttpUtils.getRequestBody(request);
-        UserSearchBO userSearchBO = gson.fromJson(requestBody, UserSearchBO.class);
-        List<User> users=adminUserService.searchUser(userSearchBO);
-        response.getWriter().println(gson.toJson(Result.ok(users)));
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -61,8 +44,13 @@ public class AdminUserServlet extends HttpServlet {
         String action = requestURI.replace("/api/admin/user/", "");
         if ("allUser".equals(action)){
             allUser(request,response);
+        }else if (("searchUser").equals(action)){
+            searchUser(request,response);  //条件查询
+        }else if (("deleteUser").equals(action)){
+            deleteUser(request,response);  //删除用户
         }
     }
+
 
     /**
      *
@@ -76,5 +64,25 @@ public class AdminUserServlet extends HttpServlet {
         result.setCode(0);
         result.setData(adminUserList);
         response.getWriter().println(gson.toJson(result));
+    }
+
+    /**
+     * 条件查询
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    private void searchUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String word=request.getParameter("word");
+        List<User> user=adminUserService.searchUser(word);
+        response.getWriter().println(gson.toJson(Result.ok(user)));
+    }
+
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        int id= Integer.parseInt(request.getParameter("id"));
+        adminUserService.deleteUser(id);
+        Result result=new Result();
+        result.setMessage("删除成功!");
+        response.getWriter().println(Result.ok());
     }
 }

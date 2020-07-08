@@ -89,27 +89,6 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
-    /**
-     * 删除管理员
-     *
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    private void deleteAdmins(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String requestBody = HttpUtils.getRequestBody(request);
-        AdminDeleteBO deleteBO = gson.fromJson(requestBody, AdminDeleteBO.class);
-        int delete = adminService.deleteAdmins(deleteBO);
-        Result result=new Result();
-        if (delete==0){
-            result.setCode(0);
-            response.getWriter().println(gson.toJson(result));
-        }else {
-            result.setCode(10000);
-            result.setMessage("删除操作错误!");
-            response.getWriter().println(gson.toJson(result));
-        }
-    }
 
     /**
      * 修改admin管理员密码信息
@@ -183,7 +162,16 @@ public class AdminServlet extends HttpServlet {
         String action = requestURI.replace("/api/admin/admin/", "");
         if ("allAdmins".equals(action)){
             allAdmins(request,response);
+        }else if ("deleteAdmins".equals(action)){
+            deleteAdmins(request,response);
         }
+    }
+
+    private void deleteAdmins(HttpServletRequest request, HttpServletResponse response)throws  IOException {
+        int id= Integer.parseInt(request.getParameter("id"));
+        adminService.deletedmins(id);
+        response.getWriter().println(Result.ok());
+        response.getWriter().println("删除成功！");
     }
 
 

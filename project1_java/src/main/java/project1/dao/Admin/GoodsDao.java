@@ -16,7 +16,6 @@ public interface GoodsDao {
 
     void addGoods(Goods goods);
 
-
     int lastInsertId();
 
     void addSpecs(List<Spec> specs);
@@ -35,6 +34,11 @@ public interface GoodsDao {
 
     void updateGoods(Goods goods);
 
-    List<ReplyVO> noReplyMsg();
+    String userMsg(int userId);
 
+    String goodsMsg(int goodsId);
+
+    List<Msg> ReplyMsg(Integer code);
+
+    void reply(Msg msg);
 }

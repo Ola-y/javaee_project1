@@ -3,10 +3,8 @@ package project1.service.admin;
 import project1.dao.Admin.GoodsDao;
 import project1.dao.Admin.GoodsDaoImpl;
 import project1.model.*;
-import project1.model.bo.admin.GoodsAddBO;
-import project1.model.bo.admin.GoodsUpdateBO;
-import project1.model.bo.admin.SpecBO;
-import project1.model.bo.admin.TypeAddBO;
+import project1.model.bo.admin.*;
+import project1.model.enumaration.MsgState;
 import project1.model.vo.admin.*;
 
 import java.util.ArrayList;
@@ -123,9 +121,46 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public List<ReplyVO> noReplyMsg() {
-        return goodsDao.noReplyMsg();
+    public List<MsgVO> noReplyMsg() {
+        List<MsgVO> msgVOList=new ArrayList<>();
+        List<Msg> msgList=goodsDao.ReplyMsg(MsgState.NOREPLY.getCode());
+        for (Msg msg : msgList) {
+            int userId=msg.getUserId();
+            String userName=goodsDao.userMsg(userId);
+            MsgUserVO user=new MsgUserVO(userName);
+            int goodsId=msg.getGoodsId();
+            String goodsName=goodsDao.goodsMsg(goodsId);
+            MsgGoodsVO goods=new MsgGoodsVO(goodsName);
+            MsgVO msgVO=new MsgVO(msg.getId(),userId,goodsId,msg.getContent(),msg.getState(),goods,user);
+            msgVOList.add(msgVO);
+        }
+        return msgVOList;
     }
 
+    @Override
+    public void reply(MsgBO msgBO) {
+        Msg msg = new Msg();
+        msg.setReplyContent(msgBO.getContent());
+        msg.setState(msgBO.getState());
+        msg.setId(msgBO.getId());
+        goodsDao.reply(msg);
+    }
+
+    @Override
+    public List<MsgVO> repliedMsg() {
+        List<MsgVO> msgVOList=new ArrayList<>();
+        List<Msg> msgList=goodsDao.ReplyMsg(MsgState.REPLIED.getCode());
+        for (Msg msg : msgList) {
+            int userId=msg.getUserId();
+            String userName=goodsDao.userMsg(userId);
+            MsgUserVO user=new MsgUserVO(userName);
+            int goodsId=msg.getGoodsId();
+            String goodsName=goodsDao.goodsMsg(goodsId);
+            MsgGoodsVO goods=new MsgGoodsVO(goodsName);
+            MsgVO msgVO=new MsgVO(msg.getId(),userId,goodsId,msg.getContent(),msg.getReplyContent(),msg.getState(),goods,user);
+            msgVOList.add(msgVO);
+        }
+        return msgVOList;
+    }
 
 }

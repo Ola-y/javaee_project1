@@ -5,15 +5,14 @@ import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 import project1.model.*;
+import project1.model.enumaration.MsgState;
 import project1.model.vo.admin.GoodsInfoVO;
 import project1.model.vo.admin.GoodsSpecVO;
-import project1.model.vo.admin.ReplyVO;
 import project1.model.vo.admin.TypeGoodsVO;
 import project1.utils.DruidUtils;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -204,36 +203,67 @@ public class GoodsDaoImpl implements GoodsDao {
     }
 
     /**
+     * 未回复页面user的名字
+     * @param userId
+     * @return
+     */
+    @Override
+    public String userMsg(int userId) {
+        QueryRunner runner=new QueryRunner(DruidUtils.getDataSource());
+        User user = null;
+        try {
+            user = runner.query("select nickname from user where id = ?", new BeanHandler<User>(User.class), userId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user.getNickname();
+    }
+
+    @Override
+    public String goodsMsg(int goodsId) {
+        QueryRunner runner=new QueryRunner(DruidUtils.getDataSource());
+        Goods goods = null;
+        try {
+            goods = runner.query("select name from goods where id = ?", new BeanHandler<Goods>(Goods.class), goodsId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return goods.getName();
+    }
+
+
+
+    /**
      * 未回复页面的显示
      * @return
      */
     @Override
-    public List<ReplyVO> noReplyMsg() {
+    public List<Msg> ReplyMsg(Integer code) {
         QueryRunner runner=new QueryRunner(DruidUtils.getDataSource());
-        List<ReplyVO> replyVOList = new ArrayList<>();
-        List<Reply> replyList = new ArrayList<>();
+        List<Msg> msgList = null;
         try {
-            replyList = runner.query("select * from reply where state = 0", new BeanListHandler<Reply>(Reply.class));
-            for (Reply reply : replyList) {
-                Goods goods = runner.query("select name from goods where id = ?",
-                        new BeanHandler<Goods>(Goods.class),
-                        reply.getGoodsId());
-                User user = runner.query("select nickname from user where id = ?",
-                        new BeanHandler<User>(User.class),
-                        reply.getUserId());
-                ReplyVO replyVO = new ReplyVO(reply.getId(),
-                        reply.getUserId(),
-                        reply.getGoodsId(),
-                        reply.getContent(),
-                        reply.getStateId(),
-                        reply.getCreatetime(),
-                        goods,
-                        user);
-                replyVOList.add(replyVO);
-            }
+            msgList = runner.query("select * from msg where state = ?", new BeanListHandler<Msg>(Msg.class), code);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return replyVOList;
+        return msgList;
     }
+
+    /**
+     * 信息回复功能
+     * @param msg
+     */
+    @Override
+    public void reply(Msg msg) {
+        QueryRunner runner=new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("update msg set `replyContent` = ? , `state` = ? where `id` = ?",
+                    msg.getReplyContent(),
+                    MsgState.REPLIED.getCode(),
+                    msg.getId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

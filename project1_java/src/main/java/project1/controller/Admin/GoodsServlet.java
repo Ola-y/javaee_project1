@@ -1,15 +1,14 @@
 package project1.controller.Admin;
 
 import com.google.gson.Gson;
-import project1.model.Goods;
-import project1.model.Reply;
 import project1.model.bo.admin.GoodsAddBO;
 import project1.model.Result;
 import project1.model.Type;
 import project1.model.bo.admin.GoodsUpdateBO;
+import project1.model.bo.admin.MsgBO;
 import project1.model.bo.admin.TypeAddBO;
 import project1.model.vo.admin.GoodsGetVO;
-import project1.model.vo.admin.ReplyVO;
+import project1.model.vo.admin.MsgVO;
 import project1.model.vo.admin.TypeGoodsVO;
 import project1.service.admin.GoodsService;
 import project1.service.admin.GoodsServiceImpl;
@@ -47,7 +46,21 @@ public class GoodsServlet extends HttpServlet {
             addType(request,response);
         }else if ("updateGoods".equals(action)){
             updateGoods(request,response);
+        }else if ("reply".equals(action)){
+            reply(request,response);
         }
+    }
+
+    /**
+     * 留言页面恢复
+     * @param request
+     * @param response
+     */
+    private void reply(HttpServletRequest request, HttpServletResponse response)throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+        MsgBO msgBO = gson.fromJson(requestBody, MsgBO.class);
+        goodsService.reply(msgBO);
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**
@@ -120,6 +133,8 @@ public class GoodsServlet extends HttpServlet {
             getGoodsInfo(request,response);
         }else if ("noReplyMsg".equals(action)){
             noReplyMsg(request,response);
+        }else if ("repliedMsg".equals(action)){
+            repliedMsg(request,response);
         }
     }
 
@@ -129,8 +144,18 @@ public class GoodsServlet extends HttpServlet {
      * @param response
      */
     private void noReplyMsg(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        List<ReplyVO> replyVOS = goodsService.noReplyMsg();
-        response.getWriter().println(gson.toJson(Result.ok()));
+        List<MsgVO> msgVOS = goodsService.noReplyMsg();
+        response.getWriter().println(gson.toJson(Result.ok(msgVOS)));
+    }
+
+    /**
+     * 获取回复页面
+     * @param request
+     * @param response
+     */
+    private void repliedMsg(HttpServletRequest request, HttpServletResponse response)   throws IOException{
+        List<MsgVO> msgVOS = goodsService.repliedMsg();
+        response.getWriter().println(gson.toJson(Result.ok(msgVOS)));
     }
 
     /**
